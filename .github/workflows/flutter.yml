@@ -20,7 +20,7 @@ jobs:
         run: flutter pub get
 
       - name: Run analyzer
-        run: flutter analyze
+        run: flutter analyze mobile\squad_ride
 
       - name: Run tests
-        run: flutter test
+        run: flutter test mobile\squad_ride
