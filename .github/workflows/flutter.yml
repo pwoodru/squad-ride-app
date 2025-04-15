@@ -24,3 +24,11 @@ jobs:
 
       - name: Run tests
         run: cd mobile && cd squad_ride && flutter test
+
+      - name: Notify Discord
+        if: always()
+        run: |
+          STATUS=${{ job.status }}
+          curl -H "Content-Type: application/json" \
+            -X POST -d "{\"content\": \"GitHub Actions CI: $STATUS for [${{ github.repository }}@${{ github.ref_name }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
