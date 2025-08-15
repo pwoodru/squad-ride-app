@@ -32,7 +32,7 @@ jobs:
     - name: Run backend tests
       run: |
         cd backend
-        ./mvnw clean test
+        mvn clean test
     
     # Frontend tests
     - name: Set up Node.js
@@ -45,7 +45,7 @@ jobs:
     - name: Install frontend dependencies
       run: |
         cd frontend
-        npm install
+        npm ci
         
     - name: Run frontend tests
       run: |
