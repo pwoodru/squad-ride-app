@@ -1,6 +1,6 @@
-# Squad Ride - Betting Application
+# Squad Ride - Sports Fantasy Game
 
-A modern sports betting application built with Vue 3 frontend and Spring Boot backend.
+A modern sports fantasy game where players get to compete against their friends, group up as a squad and take on other squads, or challenge their sports intuitions against others around the world... all using real odds straight out of Vegas!
 
 ## 🔧 Features
 
@@ -12,6 +12,7 @@ A modern sports betting application built with Vue 3 frontend and Spring Boot ba
 - Dark theme with glassmorphism effects
 
 ## 🛠️ Technology Stack
+#### Built using Vue 3 and Java Spring Boot, the application is flexible and future proof, guaranteeing sports fantasy fun for years to come!
 
 **Frontend:**
 - Vue 3 with Composition API
@@ -25,14 +26,3 @@ A modern sports betting application built with Vue 3 frontend and Spring Boot ba
 - H2 Database (in-memory)
 - Lombok for boilerplate reduction
 - Jakarta Validation
-
-## 📖 Documentation
-
-See the `docs/` folder for detailed API documentation and setup instructions.
-
-## 🐳 Docker Support
-
-Run the entire application with Docker:
-```bash
-docker-compose up
-```
