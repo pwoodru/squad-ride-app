@@ -112,7 +112,7 @@
 
 <script>
 import { ref, reactive, onMounted, computed } from 'vue'
-import { useSquadRideAPI } from '../composables/useSquadRideAPP'
+import { useSquadRideAPI } from '../composables/useSquadRideApp'
 
 export default {
   name: 'SquadRideApp',
