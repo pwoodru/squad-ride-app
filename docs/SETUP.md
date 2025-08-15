@@ -94,7 +94,7 @@ It's time to get all the code in your system.
 - Once setup, you will now have the entire code project in VS Code with all of the correct prerequisites installed
 
 ### 2. Backend Setup
-We have everything installed. We have all the code pulled. This is the moment of truth. If you installed everything correctly there won't be any issues. If you run into errors here... your name must be Dades. Good luck hoss.
+We have everything installed. We have all the code pulled. This is the moment of truth. If you installed everything correctly there won't be any issues. If you run into errors here... good luck hoss.
 
 - With VS Code open, you'll see the standard bar at the top of the screen starting with File, Edit... etc.
 - Select "Terminal" from these options and choose "New Terminal"
@@ -105,7 +105,7 @@ We have everything installed. We have all the code pulled. This is the moment of
 - If the path shows that you are inside the "backend" folder (you can type "pwd" again and press enter to double check), you can proceed to the final step.
 - **NOTE** You can type the command "cd .." to move backwards a folder if you end up changing to the wrong place.
 - Once inside the backend folder, type the command "mvn clean install" to run Maven and build the backend portion of the code. Good luck. If you run into errors, go to the project file location "target/surefire-reports/" and put the error log files into an AI like Claude or ChatGPT. It can help you more than anyone at this stage.
-- If you see "Build Successful", you've gotten through the hardest part of this entire installation. Congratulations Dades.
+- If you see "Build Successful", you've gotten through the hardest part of this entire installation. Congratulations.
 - Now run the following command to generate the final files Maven will need: "mvn -N wrapper:wrapper"
 
 ### 3. Frontend Setup
@@ -116,6 +116,27 @@ This is a similar process to the backend setup, but considerably easier and less
 - Install the required frontend dependencies by typing the command "npm install" and pressing enter 
 - As long as you don't see red errors, your frontend is now built properly.
 - We're on the home stretch
+
+### 4. Create your own repository branch
+Now that you have all the code, the backend and frontend are confirmed to build properly, and you can view the application in your browser, it's time to get your very own development branch up and running.
+
+- Navigate back to the "Source Control" tab on the left side of VS Code where you initially cloned the repository. If everything got set up correctly, you should see the repository name "squad-ride-app" under the Repositories dropdown.
+- Next to "squad-ride-app" you'll see the branch name you're currently working out of. Right now it should say "main". Main is the mother of all branches and the location of all the working code that will be put on the App Store. We don't want to do our development here and mess things up, instead we want to create our own branch that we can tweak, edit, and mess around with.
+- Click on "main" and a dropdown should open up at the top of your screen. Select the option "+ Create new branch from..."
+- The bottom half of your options will be "Remote Branches". These are pre-existing branches that exist in GitHub but not on your machine.
+- Select the remote branch option "origin/release/v0.0.1" to create a new branch for yourself based off of the most recent "release" version of our application.
+- Start your branch name with "feature/" and add whatever name makes you happy after that. For example: "feature/woodys-playground". If you want to use multiple words like in the example, only use "-" to separate words. Spaces and other characters like underscores are not accepted.
+- Git will create an exact copy of the most recent release branch with your chosen name that you can now feel free to edit code in. When you have changes you want to update the repository with, your commits and pushes will update your specific branch in the repository. Later, when the changes have been reviewed and approved your branch will get merged into its "parent" branch, the release you created it from. This is how we will handle everyone making different updates to the app.
+
+#### Current Repository Branch Structure
+
+- Main: The official application that is built and put on the App Store. This branch will contain all of the updates and content from the most recent release branch.
+- Release: Every time we have new updates or content we are working on, completed tasks will be pushed to the newest release branch so that we can view and test what the next version of the application will look like on the App Store before actually releasing it.
+- Feature: This is where the shrimps will go crazy. Each shrimp will have its own feature branch where all work will be done. When a task is completed (and not application-breaking), it gets merged with the release branch it came from.
+
+Overall flow: `feature -> release -> main`
+
+- Eventually we will also have a dev branch (and potentially a QA branch specifically for testing) that will branch off of each release, further increasing our capabilities and organization.
 
 ### Final Build
 - Navigate in your terminal to the root directory "squad-ride-app"
@@ -146,8 +167,7 @@ This will start both frontend and backend services.
 - Launching the application without Docker is possible. Refer to the bottom of these instructions for those commands.
 
 #### Final Comments
-- Once you have everything built and you can successfully view the application from the frontend link, you can begin actively coding.
-- Create a new branch from the respective release, give it a name recognizable by everyone that it is your branch.
+- Once you have everything built, you've created your own branch, and you can successfully view the application from the frontend link, you can begin actively coding.
 - Begin making code changes. When you edit code anywhere and press CTRL+S to save the file, the frontend webpage will automatically update with your changes.
 - If you made a mistake and caused an error, the frontend page will display the location of the error along with a brief description so you can attempt to fix it quickly.
 - Happy Coding!
