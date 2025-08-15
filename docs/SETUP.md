@@ -145,10 +145,15 @@ Overall flow: `feature -> release -> main`
 - If you see a success, move to the final step: Running the app.
 
 ## Run the Application
+Make sure your Docker Desktop app is up and the engine is running
 
-Run the entire application with Docker:
-- Make sure your Docker Desktop app is up and the engine is running
-- In the terminal of VS Code, navigate to the home folder location "squad-ride-app". Do **NOT** run the following command inside the "backend" or "frontend" folder.
+#### Option 1: Startup Script
+- Navigate to the "squad-ride-app" home directory of the project in the terminal (or just open a new terminal)
+- Run the command ".\script.ps1"
+- When everything is up and running your terminal will notify you and provide the links for frontend and backend
+
+#### Option 2: Manually run Docker
+- In the terminal, navigate to the home folder location "squad-ride-app". Do **NOT** run the following command inside the "backend" or "frontend" folder.
 - Type the command "docker-compose up" and press enter
 
 This will start both frontend and backend services.
@@ -168,7 +173,7 @@ This will start both frontend and backend services.
 
 #### Final Comments
 - Once you have everything built, you've created your own branch, and you can successfully view the application from the frontend link, you can begin actively coding.
-- Begin making code changes. When you edit code anywhere and press CTRL+S to save the file, the frontend webpage will automatically update with your changes.
+- When you edit code anywhere and press CTRL+S to save the file, the frontend webpage will automatically update with your changes.
 - If you made a mistake and caused an error, the frontend page will display the location of the error along with a brief description so you can attempt to fix it quickly.
 - Happy Coding!
 
