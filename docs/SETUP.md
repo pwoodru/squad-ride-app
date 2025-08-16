@@ -149,7 +149,7 @@ Make sure your Docker Desktop app is up and the engine is running
 
 #### Option 1: Startup Script
 - Navigate to the "squad-ride-app" home directory of the project in the terminal (or just open a new terminal)
-- Run the command ".\script.ps1"
+- Run the command ".\start.ps1"
 - When everything is up and running your terminal will notify you and provide the links for frontend and backend
 
 #### Option 2: Manually run Docker
