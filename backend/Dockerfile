@@ -2,12 +2,18 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
+# Install bash and curl (required for mvnw)
+RUN apt-get update && apt-get install -y bash curl && rm -rf /var/lib/apt/lists/*
+
 # Copy Maven wrapper and pom.xml
-COPY mvnw* ./
+COPY mvnw ./
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Make mvnw executable (important for Linux containers)
+# Convert mvnw to Unix line endings (in case it's CRLF)
+RUN sed -i 's/\r$//' mvnw
+
+# Make mvnw executable
 RUN chmod +x mvnw
 
 # Download dependencies
