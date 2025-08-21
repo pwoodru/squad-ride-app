@@ -10,6 +10,8 @@ import com.squadride.app.entity.Bet.BetStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -19,10 +21,53 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 public class UserService {
-    
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
     private final UserRepository userRepository;
     private final SquadRepository squadRepository;
     private final BetRepository betRepository;
+
+    public boolean authenticate(String username) {
+    // In production, use password hashing (e.g., BCrypt) instead of plain-text comparison!
+    public boolean authenticate(String username, String password) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            // In production, use password hash comparison!
+            return user.getPassword() != null && user.getPassword().equals(password);
+        }
+        return false;
+    }
+
+    public UserDTO signup(UserDTO userDTO) {
+        log.info("Attempting signup for email: {} username: {}", userDTO.getEmail(), userDTO.getUsername());
+        try {
+            if (userRepository.existsByEmail(userDTO.getEmail())) {
+                log.warn("Signup failed: Email already in use: {}", userDTO.getEmail());
+                throw new IllegalArgumentException("Email already in use");
+            }
+            if (userDTO.getUsername() != null && userRepository.existsByUsername(userDTO.getUsername())) {
+                log.warn("Signup failed: Username already in use: {}", userDTO.getUsername());
+                throw new IllegalArgumentException("Username already in use");
+            }
+            User user = new User();
+            user.setUsername(userDTO.getUsername() != null ? userDTO.getUsername() : userDTO.getEmail());
+            user.setEmail(userDTO.getEmail());
+            user.setDisplayName(userDTO.getDisplayName());
+        user.setBalance(BigDecimal.ZERO);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+        // user.setPassword(userDTO.getPassword()); // In production, hash this!
+        log.info("Saving user: {}", user);
+        User saved = userRepository.save(user);
+        log.info("User saved with id: {}", saved.getId());
+        return convertToDTO(saved);
+    } 
+    catch (Exception e) {
+        log.error("Error during signup for username: {}", userDTO.getUsername(), e);
+        throw e;
+        }
+    }
     
     public Optional<UserDTO> findById(Long id) {
         return userRepository.findById(id).map(this::convertToDTO);
