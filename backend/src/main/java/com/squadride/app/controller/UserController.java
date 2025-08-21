@@ -29,7 +29,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
-        boolean authenticated = userService.authenticate(userDTO.getUsername());
+        boolean authenticated = userService.authenticate(userDTO.getUsername(), userDTO.getPassword());
         if (authenticated) {
             return ResponseEntity.ok("Login successful");
         } else {

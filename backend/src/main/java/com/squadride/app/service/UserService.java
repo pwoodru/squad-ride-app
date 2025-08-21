@@ -27,7 +27,6 @@ public class UserService {
     private final SquadRepository squadRepository;
     private final BetRepository betRepository;
 
-    public boolean authenticate(String username) {
     // In production, use password hashing (e.g., BCrypt) instead of plain-text comparison!
     public boolean authenticate(String username, String password) {
         Optional<User> userOpt = userRepository.findByUsername(username);
@@ -52,6 +51,7 @@ public class UserService {
             }
             User user = new User();
             user.setUsername(userDTO.getUsername() != null ? userDTO.getUsername() : userDTO.getEmail());
+            user.setPassword(userDTO.getPassword());
             user.setEmail(userDTO.getEmail());
             user.setDisplayName(userDTO.getDisplayName());
         user.setBalance(BigDecimal.ZERO);

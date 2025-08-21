@@ -22,6 +22,9 @@ public class User {
     private String username;
 
     @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
     private String email;
 
     
@@ -48,4 +51,5 @@ public class User {
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Bet> bets;
+
 }
