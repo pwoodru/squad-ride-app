@@ -28,7 +28,15 @@ public class UserService {
     private final BetRepository betRepository;
 
     public boolean authenticate(String username) {
-        return userRepository.existsByUsername(username);
+    // In production, use password hashing (e.g., BCrypt) instead of plain-text comparison!
+    public boolean authenticate(String username, String password) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            // In production, use password hash comparison!
+            return user.getPassword() != null && user.getPassword().equals(password);
+        }
+        return false;
     }
 
     public UserDTO signup(UserDTO userDTO) {
