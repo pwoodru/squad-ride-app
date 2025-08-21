@@ -64,7 +64,7 @@ public class UserService {
         return convertToDTO(saved);
     } 
     catch (Exception e) {
-        log.error("Error during authentication for username: {}: username {}", e.getMessage(), e);
+        log.error("Error during signup for username: {}", userDTO.getUsername(), e);
         throw e;
         }
     }
