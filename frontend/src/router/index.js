@@ -1,9 +1,27 @@
+import Odds from '../components/Odds.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+
 import SquadRideApp from '../components/SquadRideApp.vue'
+import Login from '../components/Login.vue'
 
 const routes = [
   {
+    path: '/odds',
+    name: 'Odds',
+    component: Odds
+  },
+  {
     path: '/',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/signup',
+    name: 'SignUp',
+    component: () => import('../components/SignUp.vue')
+  },
+  {
+    path: '/home',
     name: 'Home',
     component: SquadRideApp
   }

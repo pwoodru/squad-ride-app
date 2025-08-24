@@ -10,10 +10,32 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8081"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8081", "http://localhost:3001"})
 public class UserController {
     
     private final UserService userService;
+
+    // CORS for signup endpoint to allow frontend dev server
+    @CrossOrigin(origins = {"http://localhost:3001", "http://localhost:3000", "http://localhost:8081"})
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody UserDTO userDTO) {
+        try {
+            UserDTO created = userService.signup(userDTO);
+            return ResponseEntity.ok(created);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
+        boolean authenticated = userService.authenticate(userDTO.getUsername(), userDTO.getPassword());
+        if (authenticated) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(401).body("Invalid username");
+        }
+    }
     
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
