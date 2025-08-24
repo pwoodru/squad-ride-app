@@ -22,6 +22,7 @@
         </div>
       </div>
 
+      
       <!-- Header Section -->
       <div class="header-section">
         <div class="header-content">
@@ -55,9 +56,9 @@
             <span>Quick Actions</span>
           </div>
           <div class="picks-grid">
-            <div class="pick-card" @click="navigateTo('squads')" :class="{ active: activeSection === 'squads' }">
+            <div class="pick-card" @click="navigateTo('odds')" :class="{ active: activeSection === 'odds' }">
               <div class="pick-icon">💥</div>
-              <div class="pick-title">My Squads</div>
+              <div class="pick-title">Odds</div>
               <div class="pick-count">{{ stats.activeSquads }} Active Teams</div>
             </div>
             <div class="pick-card" @click="navigateTo('bets')" :class="{ active: activeSection === 'bets' }">
@@ -88,39 +89,43 @@
         </div>
       </div>
 
-      <!-- Bottom Navigation -->
+
       <div class="bottom-nav">
-        <div 
-          v-for="navItem in navItems" 
+        <div
+          v-for="navItem in navItems"
           :key="navItem.id"
-          class="nav-item" 
-          :class="{ active: activeTab === navItem.id }"
+          class="nav-item"
+          :class="[{ active: activeTab === navItem.id }, navItem.isHome ? 'home-tab' : '']"
           @click="setActiveTab(navItem.id)"
         >
           <div class="nav-icon">{{ navItem.icon }}</div>
-          <span>{{ navItem.label }}</span>
+          <span v-if="!navItem.isHome">{{ navItem.label }}</span>
         </div>
       </div>
+
     </div>
 
     <!-- Loading Overlay -->
     <div v-if="loading" class="loading-overlay">
       <div class="loading-spinner"></div>
     </div>
+
   </div>
+
 </template>
 
 <script>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useSquadRideAPI } from '../composables/useSquadRideApp'
+import { useBottomNav } from '../composables/useBottomNav'
 
 export default {
   name: 'SquadRideApp',
   setup() {
-    // Reactive state
-    const loading = ref(false)
-    const activeTab = ref('squads')
-    const activeSection = ref('squads')
+  // Reactive state
+  const { navItems, activeTab, setActiveTab } = useBottomNav('odds')
+  const loading = ref(false)
+  const activeSection = ref('odds')
     const currentWeek = ref(8)
     
     const userBalance = ref(2124.75)
@@ -137,13 +142,6 @@ export default {
       liveBets: 12,
       winRate: 82
     })
-    
-    const navItems = ref([
-      { id: 'squads', icon: '💥', label: 'Squads' },
-      { id: 'bets', icon: '🎯', label: 'Bets' },
-      { id: 'scores', icon: '⚡', label: 'Scores' },
-      { id: 'stats', icon: '📊', label: 'Stats' }
-    ])
 
     // API composable
     const { fetchUserData, fetchStats, createBet, fetchGames } = useSquadRideAPI()
@@ -157,11 +155,6 @@ export default {
     }
 
     // Methods
-    const setActiveTab = (tabId) => {
-      activeTab.value = tabId
-      activeSection.value = tabId
-    }
-
     const navigateTo = (section) => {
       activeSection.value = section
       activeTab.value = section
@@ -209,23 +202,22 @@ export default {
 
     return {
       // State
-      loading,
-      activeTab,
-      activeSection,
-      currentWeek,
-      userBalance,
-      todayChange,
-      userProfile,
-      stats,
-      navItems,
-      
-      // Methods
-      formatCurrency,
-      setActiveTab,
-      navigateTo,
-      makeNewPicks,
-      viewAllGames,
-      loadUserData
+  loading,
+  activeTab, // from composable
+  activeSection,
+  currentWeek,
+  userBalance,
+  todayChange,
+  userProfile,
+  stats,
+  navItems, // from composable
+  // Methods
+  formatCurrency,
+  setActiveTab, // from composable
+  navigateTo,
+  makeNewPicks,
+  viewAllGames,
+  loadUserData
     }
   }
 }
@@ -617,6 +609,10 @@ export default {
 
 /* Bottom navigation */
 .bottom-nav {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
   height: 80px;
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(31, 41, 55, 0.8));
   backdrop-filter: blur(20px);
@@ -625,6 +621,7 @@ export default {
   align-items: center;
   border-top: 1px solid rgba(249, 115, 22, 0.3);
   padding: 0 10px;
+  z-index: 100;
 }
 
 .nav-item {
@@ -640,6 +637,28 @@ export default {
   padding: 8px 12px;
   border-radius: 12px;
   min-width: 55px;
+  position: relative;
+}
+
+.nav-item.home-tab {
+  background: linear-gradient(135deg, #f97316 60%, #fff7ed 100%);
+  color: #111827;
+  box-shadow: 0 2px 16px rgba(249, 115, 22, 0.25);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  margin-top: -30px;
+  z-index: 101;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  border: 3px solid #fff7ed;
+}
+.nav-item.home-tab .nav-icon {
+  font-size: 32px;
+  margin-bottom: 0;
+  color: #f97316;
+  filter: none;
 }
 
 .nav-item.active {
