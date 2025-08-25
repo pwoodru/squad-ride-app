@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y curl bash && rm -rf /var/lib/apt/lists/*
 
 # Copy Maven wrapper and pom.xml
-COPY mvnw ./
+COPY mvnw* ./
 COPY .mvn .mvn
 COPY pom.xml .
 
