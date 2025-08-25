@@ -54,9 +54,12 @@
                             <div class="team-score">{{ game.scoreB }}</div>
                         </div>
                     </div>
-                    <div class="game-info">
-                        <span>{{ game.venue }}</span>
-                        <span>{{ game.info }}</span>
+                  <div class="game-info">
+                    <span>{{ game.venue }}</span>
+                        <div v-if="game.spread"><strong>Spread:</strong> {{ game.spread }}</div>
+                        <div v-if="game.moneyline"><strong>Moneyline:</strong> {{ game.moneyline }}</div>
+                        <div v-if="game.total"><strong>O/U:</strong> {{ game.total }}</div>
+                    <span v-if="!game.spread && !game.moneyline && !game.total">{{ game.info }}</span>
                     </div>
                 </div>
             </div>
@@ -88,55 +91,108 @@ const balance = '$2,124.75'
 const userName = 'Marcus J.'
 const userInitials = 'MJ'
 
+function decimalToAmerican(decimal) {
+  if (decimal === null || decimal === undefined) return ''
+  if (decimal >= 2) {
+    return '+' + Math.round((decimal - 1) * 100)
+  } else {
+    return '-' + Math.round(100 / (decimal - 1))
+  }
+}
 const { navItems, activeTab, setActiveTab } = useBottomNav('odds')
+const oddsApiKey = '18dd125ea634cf309854c1b75934316f' // Replace with your actual API key
+const games = ref([])
+async function fetchOdds() {
+  const sports = [
+    { sport: 'all', label: 'All Football' },
+    { key: 'americanfootball_nfl', label: 'NFL', icon: '🏈' },
+    { key: 'americanfootball_ncaaf', label: 'NCAAF', icon: '🏈' }
+  ]
+  
+  let allGames = []
+  for (const sport of sports) {
+    const url = `https://api.the-odds-api.com/v4/sports/${sport.key}/odds/?regions=us&markets=h2h,spreads,totals&apiKey=${oddsApiKey}`
+    try {
+      const res = await fetch(url)
+      if (!res.ok) continue
+      const data = await res.json()
+      console.log('Odds API data for', sport.label, data) // <--- Add this line
+      // Map API data to your game format
+const mappedGames = data.map(game => {
+  const draftkings = game.bookmakers?.find(bm => bm.key === 'draftkings')
+  let spread = '', moneyline = '', total = ''
+  if (draftkings) {
+    // Find markets
+    const spreadMarket = draftkings.markets.find(m => m.key === 'spreads')
+    const moneylineMarket = draftkings.markets.find(m => m.key === 'h2h')
+    const totalMarket = draftkings.markets.find(m => m.key === 'totals')
+
+    // Format spreads
+   if (spreadMarket) {
+      spread = spreadMarket.outcomes
+        .map(o => `${o.name} ${o.point > 0 ? '+' : ''}${o.point} (${decimalToAmerican(o.price)})`)
+        .join(' | ')
+    }
+    // Format moneyline
+if (moneylineMarket) {
+  moneyline = moneylineMarket.outcomes
+    .map(o => `${o.name}: ${decimalToAmerican(o.price)}`)
+    .join(' | ')
+}
+    // Format totals
+    if (totalMarket) {
+      total = totalMarket.outcomes
+        .map(o => `${o.name} ${o.point} (${decimalToAmerican(o.price)})`)
+        .join(' | ')
+    }
+  }
+  return {
+    id: game.id,
+    sport: sport.key,
+    icon: sport.icon,
+    sportLabel: sport.label,
+    statusClass: 'scheduled',
+    statusText: game.commence_time ? new Date(game.commence_time).toLocaleString() : '',
+    teamA: game.home_team,
+    scoreA: '',
+    teamB: game.away_team,
+    scoreB: '',
+    venue: game.venue || '',
+    spread,
+    moneyline,
+    total,
+    info: draftkings ? '' : 'DraftKings odds not available'
+  }
+})
+      allGames = allGames.concat(mappedGames)
+    } catch (e) {
+      console.error('Failed to fetch odds for', sport.label, e)
+    }
+  }
+  games.value = allGames
+}
+
+onMounted(() => {
+  fetchOdds()
+})
 
 // Sports tabs and games
 const sportsTabs = [
-        { sport: 'all', label: 'All Sports' },
-        { sport: 'nfl', label: '🏈 NFL' },
-        { sport: 'nba', label: '🏀 NBA' },
-        { sport: 'mlb', label: '⚾ MLB' },
-        { sport: 'nhl', label: '🏒 NHL' },
-        { sport: 'soccer', label: '⚽ Soccer' }
+  { sport: 'all', label: 'All Football' },
+  { sport: 'americanfootball_nfl', label: '🏈 NFL' },
+  { sport: 'americanfootball_ncaaf', label: '🏈 College Football' }
 ]
+
 const activeSport = ref('all')
 
-const games = ref([
-        {
-                id: 1, sport: 'nfl', icon: '🏈', sportLabel: 'NFL', statusClass: 'live', statusText: '3rd Quarter - 8:42',
-                teamA: 'Kansas City Chiefs', scoreA: 21, teamB: 'Buffalo Bills', scoreB: 17, venue: 'Arrowhead Stadium', info: '4th & 3 at KC 45'
-        },
-        {
-                id: 2, sport: 'nba', icon: '🏀', sportLabel: 'NBA', statusClass: 'halftime', statusText: 'Halftime',
-                teamA: 'Los Angeles Lakers', scoreA: 58, teamB: 'Boston Celtics', scoreB: 62, venue: 'Crypto.com Arena', info: '2nd Quarter Complete'
-        },
-        {
-                id: 3, sport: 'mlb', icon: '⚾', sportLabel: 'MLB', statusClass: 'live', statusText: 'Bottom 7th',
-                teamA: 'New York Yankees', scoreA: 4, teamB: 'Houston Astros', scoreB: 6, venue: 'Minute Maid Park', info: '1 out, runner on 2nd'
-        },
-        {
-                id: 4, sport: 'soccer', icon: '⚽', sportLabel: 'Premier League', statusClass: 'live', statusText: "78' - 2nd Half",
-                teamA: 'Manchester City', scoreA: 2, teamB: 'Arsenal', scoreB: 1, venue: 'Etihad Stadium', info: 'Corner kick to Man City'
-        },
-        {
-                id: 5, sport: 'nhl', icon: '🏒', sportLabel: 'NHL', statusClass: 'final', statusText: 'Final',
-                teamA: 'Tampa Bay Lightning', scoreA: 3, teamB: 'Colorado Avalanche', scoreB: 5, venue: 'Ball Arena', info: 'Game ended in regulation'
-        },
-        {
-                id: 6, sport: 'nba', icon: '🏀', sportLabel: 'NBA', statusClass: 'live', statusText: '4th - 2:15',
-                teamA: 'Golden State Warriors', scoreA: 112, teamB: 'Phoenix Suns', scoreB: 108, venue: 'Chase Center', info: 'Warriors ball, timeout'
-        }
-])
-
-//const activeTab = ref('odds')
 const stats = reactive({
     liveBets: 12 // for notification dot demo, match homepage
 })
 const router = useRouter()
 
 const filteredGames = computed(() => {
-        if (activeSport.value === 'all') return games.value
-        return games.value.filter(g => g.sport === activeSport.value)
+  if (activeSport.value === 'all') return games.value
+  return games.value.filter(g => g.sport === activeSport.value)
 })
 
 function setActiveSport(sport) {
@@ -146,12 +202,15 @@ function setActiveSport(sport) {
 function refreshScores() {
         // Simulate score updates for live games
         games.value = games.value.map(game => {
-                if (game.statusClass === 'live' && Math.random() > 0.85) {
+                if (game.statusClass === 'live') {
                         return {
                                 ...game,
-                                scoreA: game.scoreA + Math.round(Math.random()),
-                                scoreB: game.scoreB + Math.round(Math.random())
+                                //TO DO: Integrate real score updates from an API
+
+                                //scoreA: game.scoreA + Math.round(Math.random()),
+                                //scoreB: game.scoreB + Math.round(Math.random())
                         }
+
                 }
                 return game
         })
