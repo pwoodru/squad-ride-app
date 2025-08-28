@@ -6,6 +6,16 @@ import Login from '../components/Login.vue'
 
 const routes = [
   {
+    path: '/shop',
+    name: 'Shop',
+    component: () => import('../components/Shop.vue')
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('../components/Profile.vue')
+  },
+  {
     path: '/odds',
     name: 'Odds',
     component: Odds

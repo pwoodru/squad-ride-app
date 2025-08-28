@@ -2,16 +2,7 @@
         <div class="app-container">
             <div class="mobile-container">
                 <!-- Top Bar -->
-                <div class="top-bar">
-                    <div class="currency">
-                        <span>💰</span>
-                        <span>{{ formatCurrency(balance) }}</span>
-                    </div>
-                    <div class="profile-info">
-                        <span>{{ user.displayName }}</span>
-                        <div class="profile-avatar">{{ user.initials }}</div>
-                    </div>
-                </div>
+                <TopBar :user-balance="balance" :user-profile="user" />
 
                 <!-- Main Content -->
                 <div class="main-content">
@@ -91,6 +82,7 @@
 
     <script setup>
     import { ref, computed } from 'vue'
+    import TopBar from './TopBar.vue'
     import { useBottomNav } from '../composables/useBottomNav'
 
     const { navItems, activeTab, setActiveTab } = useBottomNav('home')
