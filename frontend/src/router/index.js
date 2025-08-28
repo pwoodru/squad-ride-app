@@ -11,6 +11,36 @@ const routes = [
     component: Odds
   },
   {
+    path: '/quick/dailywheel',
+    name: 'DailyWheel',
+    component: () => import('../components/DailyWheel.vue')
+  },
+  {
+    path: '/quick/dailyrewards',
+    name: 'DailyRewards',
+    component: () => import('../components/DailyRewards.vue')
+  },
+  {
+    path: '/quick/challenges',
+    name: 'Challenges',
+    component: () => import('../components/Challenges.vue')
+  },
+  {
+    path: '/squadride',
+    name: 'SquadRide',
+    component: () => import('../components/SquadRide.vue')
+  },
+  {
+    path: '/leaderboard',
+    name: 'Leaderboard',
+    component: () => import('../components/Leaderboard.vue')
+  },
+  {
+    path: '/mysquad',
+    name: 'MySquads',
+    component: () => import('../components/MySquads.vue')
+  },
+  {
     path: '/',
     name: 'Login',
     component: Login
