@@ -39,14 +39,9 @@
 
       <!-- Main Content -->
       <div class="main-content">
-        <!-- Balance Card -->
-        <div class="balance-card">
-          <div class="balance-title">Current Balance</div>
-          <div class="balance-amount">${{ formatCurrency(userBalance) }}</div>
-          <div class="balance-change" :class="{ positive: todayChange >= 0, negative: todayChange < 0 }">
-            <span>{{ todayChange >= 0 ? '🚀' : '📉' }}</span>
-            <span>{{ todayChange >= 0 ? '+' : '' }}${{ formatCurrency(Math.abs(todayChange)) }} today</span>
-          </div>
+        <!-- Center Squad Ride Button -->
+        <div class="squadride-center-btn-wrapper">
+          <button class="squadride-center-btn" @click="goToSquadRide">Squad Ride</button>
         </div>
 
         <!-- Quick Actions -->
@@ -56,26 +51,23 @@
             <span>Quick Actions</span>
           </div>
           <div class="picks-grid">
-            <div class="pick-card" @click="navigateTo('odds')" :class="{ active: activeSection === 'odds' }">
+            <div class="pick-card" @click="goToQuick('odds')">
               <div class="pick-icon">💥</div>
               <div class="pick-title">Odds</div>
               <div class="pick-count">{{ stats.activeSquads }} Active Teams</div>
             </div>
-            <div class="pick-card" @click="navigateTo('bets')" :class="{ active: activeSection === 'bets' }">
+            <div class="pick-card" @click="goToQuick('dailywheel')">
               <div class="pick-icon">🎯</div>
-              <div class="pick-title">Live Bets</div>
-              <div class="pick-count">{{ stats.liveBets }} In Progress</div>
+              <div class="pick-title">Daily Wheel</div>
               <div v-if="stats.liveBets > 0" class="notification-dot"></div>
             </div>
-            <div class="pick-card" @click="navigateTo('scores')" :class="{ active: activeSection === 'scores' }">
+            <div class="pick-card" @click="goToQuick('challenges')">
               <div class="pick-icon">⚡</div>
-              <div class="pick-title">Live Scores</div>
-              <div class="pick-count">Week {{ currentWeek }} Games</div>
+              <div class="pick-title">Challenges</div>
             </div>
-            <div class="pick-card" @click="navigateTo('stats')" :class="{ active: activeSection === 'stats' }">
+            <div class="pick-card" @click="goToQuick('dailyrewards')">
               <div class="pick-icon">📊</div>
-              <div class="pick-title">My Stats</div>
-              <div class="pick-count">{{ stats.winRate }}% Win Rate</div>
+              <div class="pick-title">Login Rewards</div>
             </div>
           </div>
         </div>
@@ -115,17 +107,20 @@
 </template>
 
 <script>
-import { ref, reactive, onMounted, computed } from 'vue'
+
+import { ref, reactive, onMounted, computed, getCurrentInstance } from 'vue'
 import { useSquadRideAPI } from '../composables/useSquadRideApp'
 import { useBottomNav } from '../composables/useBottomNav'
 
 export default {
   name: 'SquadRideApp',
   setup() {
-  // Reactive state
-  const { navItems, activeTab, setActiveTab } = useBottomNav('odds')
-  const loading = ref(false)
-  const activeSection = ref('odds')
+    // Vue Router instance
+    const { proxy } = getCurrentInstance()
+    // Reactive state
+    const { navItems, activeTab, setActiveTab } = useBottomNav('odds')
+    const loading = ref(false)
+    const activeSection = ref('odds')
     const currentWeek = ref(8)
     
     const userBalance = ref(2124.75)
@@ -155,9 +150,14 @@ export default {
     }
 
     // Methods
-    const navigateTo = (section) => {
-      activeSection.value = section
-      activeTab.value = section
+    // Decoupled quick action navigation
+    const goToQuick = (section) => {
+      proxy.$router.push(`/quick/${section}`)
+    }
+
+    // Center Squad Ride button navigation
+    const goToSquadRide = () => {
+      proxy.$router.push('/squadride')
     }
 
     const makeNewPicks = async () => {
@@ -214,7 +214,8 @@ export default {
   // Methods
   formatCurrency,
   setActiveTab, // from composable
-  navigateTo,
+  goToQuick,
+  goToSquadRide,
   makeNewPicks,
   viewAllGames,
   loadUserData
@@ -224,6 +225,29 @@ export default {
 </script>
 
 <style scoped>
+/* Center Squad Ride Button Styles */
+.squadride-center-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.squadride-center-btn {
+  background: linear-gradient(90deg, #f97316 0%, #fbbf24 100%);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 1.5rem;
+  padding: 1.2rem 3.5rem;
+  box-shadow: 0 4px 24px 0 #f9731633;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.squadride-center-btn:hover {
+  background: linear-gradient(90deg, #fbbf24 0%, #f97316 100%);
+  box-shadow: 0 6px 32px 0 #f9731655;
+}
 * {
   margin: 0;
   padding: 0;
@@ -608,21 +632,7 @@ export default {
 }
 
 /* Bottom navigation */
-.bottom-nav {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 80px;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(31, 41, 55, 0.8));
-  backdrop-filter: blur(20px);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  border-top: 1px solid rgba(249, 115, 22, 0.3);
-  padding: 0 10px;
-  z-index: 100;
-}
+
 
 .nav-item {
   display: flex;

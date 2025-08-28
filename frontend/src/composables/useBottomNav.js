@@ -7,9 +7,9 @@ export function useBottomNav(initialTab = 'home') {
   const activeTab = ref(initialTab)
   const navItems = [
     { id: 'odds', icon: '💥', label: 'Odds' },
-    { id: 'bets', icon: '🎯', label: 'Bets' },
+    { id: 'mysquad', icon: '🎯', label: 'My Squads' },
     { id: 'home', icon: '🏠', label: 'Home', isHome: true },
-    { id: 'scores', icon: '⚡', label: 'Scores' },
+    { id: 'leaderboard', icon: '⚡', label: 'Leaderboard' },
     { id: 'stats', icon: '📊', label: 'Stats' }
   ]
 
@@ -19,10 +19,10 @@ export function useBottomNav(initialTab = 'home') {
       router.push('/odds')
     } else if (tabId === 'home') {
       router.push('/home')
-    } else if (tabId === 'bets') {
-      // router.push('/bets')
-    } else if (tabId === 'scores') {
-      // router.push('/scores')
+    } else if (tabId === 'mysquad') {
+      router.push('/mysquad')
+    } else if (tabId === 'leaderboard') {
+      router.push('/leaderboard')
     } else if (tabId === 'stats') {
       // router.push('/stats')
     }
