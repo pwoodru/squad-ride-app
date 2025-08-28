@@ -1,17 +1,8 @@
 <template>
   <div class="app-container">
     <div class="mobile-container">
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <div class="currency">
-          <span>🏆</span>
-          <span>Leaderboard</span>
-        </div>
-        <div class="profile-info">
-          <span>Your Rank</span>
-          <div class="profile-avatar">#47</div>
-        </div>
-      </div>
+  <!-- Top Bar -->
+  <TopBar :user-balance="balance" :user-profile="user" />
 
       <!-- Header Section -->
       <div class="header-section">
@@ -132,7 +123,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import TopBar from './TopBar.vue'
 import { useBottomNav } from '../composables/useBottomNav'
+
+const user = { displayName: 'Marcus J.', initials: 'MJ' }
+const balance = 2124.75
 
 const { navItems, activeTab, setActiveTab } = useBottomNav('home')
 

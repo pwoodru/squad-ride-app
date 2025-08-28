@@ -2,16 +2,7 @@
         <div class="app-container">
             <div class="mobile-container">
                 <!-- Top Bar -->
-                        <div class="top-bar">
-                            <div class="currency">
-                                <span>💰</span>
-                                <span>{{ formatCurrency(balance) }}</span>
-                            </div>
-                            <div class="profile-info">
-                                <span>{{ user.displayName }}</span>
-                                <div class="profile-avatar">{{ user.initials }}</div>
-                            </div>
-                        </div>
+                <TopBar :user-balance="balance" :user-profile="user" />
 
                         <!-- Header Section -->
                         <div class="header-section">
@@ -112,6 +103,7 @@ function getSegmentStyle(idx) {
     }
 }
     import { ref } from 'vue'
+    import TopBar from './TopBar.vue'
     import { useBottomNav } from '../composables/useBottomNav'
 
     const { navItems, activeTab, setActiveTab } = useBottomNav('dailywheel')
@@ -121,9 +113,6 @@ function getSegmentStyle(idx) {
         initials: 'MJ'
     })
     const balance = ref(2124.75)
-    function formatCurrency(amount) {
-        return amount.toLocaleString()
-    }
     const rewards = [
         { name: 'Cash Bonus', value: '$25', icon: '💰', desc: 'Instant cash added to your balance', chance: '15%', bg: '#4CAF50' },
         { name: 'Free Bet Token', value: '$20', icon: '🎯', desc: 'Risk-free bet unlocked!', chance: '20%', bg: '#2196F3' },

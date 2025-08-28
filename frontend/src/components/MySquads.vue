@@ -1,17 +1,8 @@
 <template>
   <div class="app-container">
     <div class="mobile-container">
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <div class="currency">
-          <span>💰</span>
-          <span>$2,124.75</span>
-        </div>
-        <div class="profile-info">
-          <span>Marcus J.</span>
-          <div class="profile-avatar">MJ</div>
-        </div>
-      </div>
+  <!-- Top Bar -->
+  <TopBar :user-balance="balance" :user-profile="user" />
 
       <!-- Header Section -->
       <div class="header-section">
@@ -138,6 +129,9 @@
 </template>
 
 <script setup>
+import TopBar from './TopBar.vue'
+const user = { displayName: 'Marcus J.', initials: 'MJ' }
+const balance = 2124.75
 import { ref } from 'vue'
 import { useBottomNav } from '../composables/useBottomNav'
 

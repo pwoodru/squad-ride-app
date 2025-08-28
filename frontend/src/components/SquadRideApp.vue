@@ -10,17 +10,9 @@
 
     <!-- Mobile Container -->
     <div class="mobile-container">
-      <!-- Top Bar -->
-      <div class="top-bar">
-        <div class="currency">
-          <span>💰</span>
-          <span>${{ formatCurrency(userBalance) }}</span>
-        </div>
-        <div class="profile-info">
-          <span>{{ userProfile.displayName }}</span>
-          <div class="profile-avatar">{{ userProfile.initials }}</div>
-        </div>
-      </div>
+
+  <!-- Top Bar -->
+  <TopBar :user-balance="userBalance" :user-profile="userProfile" />
 
       
       <!-- Header Section -->
@@ -107,13 +99,14 @@
 </template>
 
 <script>
-
+import TopBar from './TopBar.vue'
 import { ref, reactive, onMounted, computed, getCurrentInstance } from 'vue'
 import { useSquadRideAPI } from '../composables/useSquadRideApp'
 import { useBottomNav } from '../composables/useBottomNav'
 
 export default {
   name: 'SquadRideApp',
+  components: { TopBar },
   setup() {
     // Vue Router instance
     const { proxy } = getCurrentInstance()
@@ -140,14 +133,6 @@ export default {
 
     // API composable
     const { fetchUserData, fetchStats, createBet, fetchGames } = useSquadRideAPI()
-
-    // Computed properties
-    const formatCurrency = (amount) => {
-      return new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(amount)
-    }
 
     // Methods
     // Decoupled quick action navigation
@@ -202,23 +187,22 @@ export default {
 
     return {
       // State
-  loading,
-  activeTab, // from composable
-  activeSection,
-  currentWeek,
-  userBalance,
-  todayChange,
-  userProfile,
-  stats,
-  navItems, // from composable
-  // Methods
-  formatCurrency,
-  setActiveTab, // from composable
-  goToQuick,
-  goToSquadRide,
-  makeNewPicks,
-  viewAllGames,
-  loadUserData
+      loading,
+      activeTab, // from composable
+      activeSection,
+      currentWeek,
+      userBalance,
+      todayChange,
+      userProfile,
+      stats,
+      navItems, // from composable
+      // Methods
+      setActiveTab, // from composable
+      goToQuick,
+      goToSquadRide,
+      makeNewPicks,
+      viewAllGames,
+      loadUserData
     }
   }
 }

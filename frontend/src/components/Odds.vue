@@ -1,12 +1,6 @@
 <template>
     <div class="odds-container">
-        <div class="header">
-            <div class="balance">{{ balance }}</div>
-            <div class="user-info">
-                <span>{{ userName }}</span>
-                <div class="user-avatar">{{ userInitials }}</div>
-            </div>
-        </div>
+    <TopBar :user-balance="balance" :user-profile="user" />
 
         <div class="main-content">
             <div class="page-title">
@@ -87,9 +81,9 @@ import { useRouter } from 'vue-router'
 import { useBottomNav } from '../composables/useBottomNav'
 
 // State for header
-const balance = '$2,124.75'
-const userName = 'Marcus J.'
-const userInitials = 'MJ'
+import TopBar from './TopBar.vue'
+const balance = 2124.75
+const user = { displayName: 'Marcus J.', initials: 'MJ' }
 
 function decimalToAmerican(decimal) {
   if (decimal === null || decimal === undefined) return ''
