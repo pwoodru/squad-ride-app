@@ -28,15 +28,17 @@ public class UserService {
     private final BetRepository betRepository;
 
     // In production, use password hashing (e.g., BCrypt) instead of plain-text comparison!
-    public boolean authenticate(String username, String password) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            // In production, use password hash comparison!
-            return user.getPassword() != null && user.getPassword().equals(password);
+    public UserDTO authenticate(String username, String password) {
+    Optional<User> userOpt = userRepository.findByUsername(username);
+    if (userOpt.isPresent()) {
+        User user = userOpt.get();
+        // In production, use password hash comparison!
+        if (user.getPassword() != null && user.getPassword().equals(password)) {
+            return convertToDTO(user); // Return user info
         }
-        return false;
     }
+    return null;
+}
 
     public UserDTO signup(UserDTO userDTO) {
         log.info("Attempting signup for email: {} username: {}", userDTO.getEmail(), userDTO.getUsername());
@@ -54,7 +56,7 @@ public class UserService {
             user.setPassword(userDTO.getPassword());
             user.setEmail(userDTO.getEmail());
             user.setDisplayName(userDTO.getDisplayName());
-        user.setBalance(BigDecimal.ZERO);
+        user.setBalance(new java.math.BigDecimal("1000.00"));
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         // user.setPassword(userDTO.getPassword()); // In production, hash this!

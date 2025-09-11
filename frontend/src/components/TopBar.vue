@@ -2,11 +2,11 @@
   <div class="top-bar">
     <div class="currency" @click="goToShop" style="cursor:pointer">
       <span>💰</span>
-      <span>{{ formattedBalance }}</span>
+      <div>{{ user?.balance ?? 0 }}</div>
     </div>
     <div class="profile-info" @click="goToProfile" style="cursor:pointer">
-      <span>{{ userProfile.displayName }}</span>
-      <div class="profile-avatar">{{ userProfile.initials }}</div>
+      <span>{{ user?.displayName }}</span>
+      <div class="profile-avatar">{{ user?.initials }}</div>
     </div>
   </div>
 </template>
@@ -14,6 +14,8 @@
 <script setup>
 import { computed, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '../composables/useUserStore'
+const { user } = useUserStore()
 
 // Props for balance and user profile
 const props = defineProps({

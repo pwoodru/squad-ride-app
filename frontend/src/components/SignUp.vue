@@ -35,12 +35,14 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '../composables/useUserStore' // adjust path if needed
 
 const displayName = ref('')
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const router = useRouter()
+const userStore = useUserStore()
 
 async function signup() {
   loading.value = true
@@ -51,10 +53,12 @@ async function signup() {
       body: JSON.stringify({
         displayName: displayName.value,
         email: email.value,
-        password: password.value // Only if your backend expects it
+        password: password.value
       })
     })
     if (!response.ok) throw new Error('Signup failed')
+    const user = await response.json()
+    userStore.setUser(user) // Save user globally
     router.push('/home')
   } catch (e) {
     alert(e.message)
