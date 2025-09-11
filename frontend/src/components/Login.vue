@@ -23,7 +23,7 @@
         <div class="login-links">
           <a href="#" @click.prevent="forgotPassword">Forgot password?</a>
           <span>·</span>
-    <a href="#" @click.prevent="signUp">Sign up</a>
+          <a href="#" @click.prevent="signUp">Sign up</a>
         </div>
       </form>
     </div>
@@ -33,11 +33,13 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '../composables/useUserStore'
 
 const username = ref('')
 const password = ref('')
 const loading = ref(false)
 const router = useRouter()
+const userStore = useUserStore()
 
 async function login() {
   loading.value = true
@@ -48,8 +50,10 @@ async function login() {
       body: JSON.stringify({ username: username.value, password: password.value })
     })
     if (response.ok) {
+      const user = await response.json()
+      userStore.setUser(user) // Save user globally for TopBar etc.
       loading.value = false
-      router.push('/home') // Redirect to home page
+      router.push('/home')
     } else {
       const msg = await response.text()
       loading.value = false

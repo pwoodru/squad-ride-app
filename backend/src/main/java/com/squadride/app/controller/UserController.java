@@ -29,13 +29,13 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
-        boolean authenticated = userService.authenticate(userDTO.getUsername(), userDTO.getPassword());
-        if (authenticated) {
-            return ResponseEntity.ok("Login successful");
-        } else {
-            return ResponseEntity.status(401).body("Invalid username");
-        }
+    UserDTO authenticatedUser = userService.authenticate(userDTO.getUsername(), userDTO.getPassword());
+    if (authenticatedUser != null) {
+        return ResponseEntity.ok(authenticatedUser); // Send full user info as JSON
+    } else {
+        return ResponseEntity.status(401).body("Invalid username or password");
     }
+}
     
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {

@@ -2,16 +2,7 @@
             <div class="squadride-app-bg">
                 <div class="mobile-container">
                     <!-- Top Bar -->
-                    <div class="top-bar">
-                        <div class="currency">
-                            <span>💰</span>
-                            <span>${{ formatCurrency(userBalance) }}</span>
-                        </div>
-                        <div class="profile-info">
-                            <span>{{ userProfile.displayName }}</span>
-                            <div class="profile-avatar">{{ userProfile.initials }}</div>
-                        </div>
-                    </div>
+                    <TopBar :user-balance="userBalance" :user-profile="userProfile" />
 
                     <!-- Header -->
                     <div class="page-title">
@@ -118,8 +109,9 @@
         </template>
 
         <script setup>
-        import { ref, reactive } from 'vue'
-        import { useBottomNav } from '../composables/useBottomNav'
+    import { ref, reactive, onMounted } from 'vue'
+    import TopBar from './TopBar.vue'
+    import { useBottomNav } from '../composables/useBottomNav'
 
         const { navItems, activeTab, setActiveTab } = useBottomNav('home')
 
@@ -144,69 +136,53 @@
             potSize: 25
         })
 
-        const rides = ref([
-            {
-                id: 1,
-                title: 'Saturday Night Bangers 🔥',
-                creator: 'TylerB',
-                status: 'Building',
-                statusClass: 'building',
-                picks: [
-                    { team: 'Lakers -6.5', details: 'vs Warriors • 8:00 PM', odds: '+110', contributor: 'TylerB' },
-                    { team: 'Chiefs ML', details: 'vs Bills • 4:25 PM', odds: '-140', contributor: 'SarahM' }
-                ],
-                totalOdds: '+850',
-                potSize: 125,
-                participants: ['TB', 'SM', '+'],
-                maxRiders: 6
-            },
-            {
-                id: 2,
-                title: 'Sunday Funday Special',
-                creator: 'MikeR',
-                status: 'Placed',
-                statusClass: 'placed',
-                picks: [
-                    { team: 'Cowboys +3', details: 'vs Giants • 1:00 PM', odds: '-110', contributor: 'MikeR' },
-                    { team: 'Over 47.5', details: 'Eagles vs Commanders', odds: '+105', contributor: 'You' },
-                    { team: 'Mahomes 2+ TDs', details: 'Player Props', odds: '-150', contributor: 'JenK' }
-                ],
-                totalOdds: '+420',
-                potSize: 200,
-                participants: ['MR', 'MJ', 'JK'],
-                maxRiders: 3
-            },
-            {
-                id: 3,
-                title: 'Monday Night Madness',
-                creator: 'You',
-                status: 'Open',
-                statusClass: '',
-                picks: [],
-                totalOdds: '--',
-                potSize: 0,
-                participants: ['MJ'],
-                maxRiders: 8
-            }
-        ])
+        const rides = ref([])
 
-        function createRide() {
-            rides.value.push({
-                id: rides.value.length + 1,
-                title: newRide.title,
-                creator: userProfile.displayName,
-                status: 'Building',
-                statusClass: 'building',
-                picks: [],
-                totalOdds: '--',
-                potSize: newRide.potSize,
-                participants: [userProfile.initials],
-                maxRiders: newRide.maxRiders
-            })
-            newRide.title = ''
-            newRide.maxRiders = 6
-            newRide.potSize = 25
-            showModal.value = false
+        async function fetchRides() {
+            try {
+                const response = await fetch(`/api/users/${userProfile.userId}/squads`)
+                if (!response.ok) throw new Error('Failed to fetch squads')
+                const squads = await response.json()
+                // Map backend squads to rides format
+                rides.value = squads.map(squad => ({
+                    id: squad.id,
+                    title: squad.name,
+                    creator: userProfile.displayName, // or squad.creator if available
+                    status: 'Building', // You can map status if available
+                    statusClass: 'building',
+                    picks: [], // Add picks if your backend supports it
+                    totalOdds: '--',
+                    potSize: squad.potSize || 0,
+                    participants: [userProfile.initials], // Or squad.participants if available
+                    maxRiders: squad.maxRiders || 6
+                }))
+            } catch (err) {
+                rides.value = []
+            }
+        }
+
+        onMounted(fetchRides)
+
+        async function createRide() {
+            try {
+                const response = await fetch(
+                    `/api/squads?userId=${userProfile.userId}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: newRide.title, description: '' })
+                    }
+                )
+                if (!response.ok) throw new Error('Failed to create squad')
+                await response.json()
+                await fetchRides()
+                newRide.title = ''
+                newRide.maxRiders = 6
+                newRide.potSize = 25
+                showModal.value = false
+            } catch (err) {
+                alert('Error creating ride: ' + err.message)
+            }
         }
         </script>
 
