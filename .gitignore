@@ -166,4 +166,4 @@ Thumbs.db
 .mvn/wrapper/maven-wrapper.properties
 
 # Vue specific
-.eslintcache
+.eslintcache.claude/
