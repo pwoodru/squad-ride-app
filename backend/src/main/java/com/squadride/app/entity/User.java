@@ -20,9 +20,10 @@ public class User {
     
     @Column(nullable = false, unique = true)
     private String username;
-    
+
     @Column(nullable = false)
     private String email;
+
     
     @Column(name = "display_name")
     private String displayName;

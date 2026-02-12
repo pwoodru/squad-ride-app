@@ -1,18 +1,18 @@
+# Default profile (H2, in-memory)
 spring:
   application:
     name: squad-ride-api
-  
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
     password: 
-  
   h2:
     console:
       enabled: true
       path: /h2-console
-  
+      settings:
+        web-allow-others: true
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -22,28 +22,23 @@ spring:
       hibernate:
         format_sql: true
     defer-datasource-initialization: false
-
   sql:
     init:
       mode: never
-  
   jackson:
     serialization:
       write-dates-as-timestamps: false
     default-property-inclusion: non_null
-
 server:
   port: 8080
   servlet:
     context-path: /
-
 logging:
   level:
     com.squadride.app: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
 management:
   endpoints:
     web:
@@ -52,3 +47,28 @@ management:
   endpoint:
     health:
       show-details: always
+
+---
+# Docker profile (PostgreSQL)
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:postgresql://localhost:5432/squadride
+    username: squadride_user
+    password: squadride_pass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        default_schema: squadride
+  sql:
+    init:
+      mode: never
+server:
+  port: 8080

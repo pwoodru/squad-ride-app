@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev  # Use development Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true
+    volumes:
+      - ./backend/src:/app/src          # Mount source code for live reload
+      - ~/.m2:/root/.m2                 # Cache Maven dependencies
+    networks:
+      - squad-ride-network
+    
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://backend:8080/api
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app                 # Mount source for hot reload
+      - /app/node_modules               # Preserve node_modules
+    networks:
+      - squad-ride-network
+
+networks:
+  squad-ride-network:
+    driver: bridge

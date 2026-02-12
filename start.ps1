@@ -1,10 +1,36 @@
 # Squad Ride Application Startup Script
+param(
+    [switch]$Dev,
+    [switch]$Production
+)
 
-Write-Host "Starting Squad Ride Application..." -ForegroundColor Green
+if ($Dev) {
+    Write-Host "Starting in DEVELOPMENT mode (with hot reload)..." -ForegroundColor Cyan
+    $composeFile = "docker-compose.dev.yml"
+} elseif ($Production) {
+    Write-Host "Starting in PRODUCTION mode..." -ForegroundColor Green  
+    $composeFile = "docker-compose.yml"
+} else {
+    Write-Host "Choose mode:" -ForegroundColor Yellow
+    Write-Host "  [D] Development (hot reload)" -ForegroundColor Cyan
+    Write-Host "  [P] Production" -ForegroundColor Green
+    Write-Host "  [Enter] Development (default)" -ForegroundColor Gray
+    
+    $choice = Read-Host "Mode"
+    
+    if ($choice -eq 'P' -or $choice -eq 'p') {
+        Write-Host "Starting in PRODUCTION mode..." -ForegroundColor Green
+        $composeFile = "docker-compose.yml"
+    } else {
+        Write-Host "Starting in DEVELOPMENT mode (with hot reload)..." -ForegroundColor Cyan
+        $composeFile = "docker-compose.dev.yml"
+    }
+}
+
 Write-Host ""
 
 # Start Docker Compose
-docker-compose up -d
+docker-compose -f $composeFile up -d
 
 # Wait for services to be ready
 Write-Host "Waiting for services to start..." -ForegroundColor Yellow
@@ -12,7 +38,7 @@ Write-Host "Waiting for services to start..." -ForegroundColor Yellow
 # Wait for backend with multiple checks
 $backendReady = $false
 $attempts = 0
-$maxAttempts = 20
+$maxAttempts = 30
 
 do {
     Start-Sleep -Seconds 3
@@ -20,10 +46,10 @@ do {
     
     try {
         # Check health endpoint
-        $healthResponse = Invoke-RestMethod -Uri "http://localhost:8080/actuator/health" -TimeoutSec 10
+        $healthResponse = Invoke-RestMethod -Uri "http://localhost:8080/actuator/health" -TimeoutSec 2
         
         # Additional check - try to hit a basic endpoint to ensure Spring is fully loaded
-        $basicResponse = Invoke-WebRequest -Uri "http://localhost:8080/" -TimeoutSec 10
+        $basicResponse = Invoke-WebRequest -Uri "http://localhost:8080/" -TimeoutSec 2
         
         $backendReady = $true
         Write-Host "Backend health check passed (attempt $attempts)" -ForegroundColor Green
